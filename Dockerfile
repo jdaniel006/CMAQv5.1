@@ -88,24 +88,26 @@ mkdir IOAPI ; cd IOAPI ;\
 tar -zxf ../ioapi-3.2.tar.gz ;\
 
 # Modificaciones del Makefile para nocpl y nuestros directorios
-cp Makefile.template Makefile ;\
+        cp Makefile.template  Makefile ;\
 # Makefile modifications: nocpl and use our directories
-sed -i 's|Linux2_x86_64.*|Linux2_x86_64gfort|' Makefile ;\
-sed -i 's|`pwd`.*|/opt/IOAPI/|' Makefile ;\
-sed -i 's|${HOME}.*|/opt|' Makefile ;\
-sed -i 's|NCFLIBS = -lnetcdf -lnetcdff # assumes netCDF-4-style separate libs|NCFLIBS = "-lnetcdff -lnetcdf -lhdf5hl_fortran -lhdf5_fortran -lhdf5_hl -lhdf5 -lm -lz -lcurl"|' Makefile ;\
-sed -i '/TESTDIR/d' Makefile ;\
-sed -i '/RTTDIR/d' Makefile ;\
-make dirs
+        sed -i 's|Linux2_x86_64.*|Linux2_x86_64gfort|' Makefile ;\
+        sed -i '/^BASEDIR.*/c\BASEDIR = /opt/IOAPI' Makefile ;\
+        sed -i 's|${HOME}.*|/opt|' Makefile ;\
+        sed -i '/^NCFLIBS.*/c\NCFLIBS   = "-lnetcdff -lnetcdf -lhdf5hl_fortran -lhdf5_fortran -lhdf5_hl -lhdf5  -lm -lz -lcurl"' Makefile ;\
+        sed -i '/TESTDIR/d' Makefile ;\
+        sed -i '/RTTDIR/d' Makefile ;\
+        make dirs
 
 RUN cp /opt/lib/libnetcdf.a \
-/opt/lib/libnetcdff.a \
-/opt/IOAPI/Linux2_x86_64gfort
+        /opt/lib/libnetcdff.a \
+        /opt/IOAPI/Linux2_x86_64gfort
+
 
 RUN cd /opt/IOAPI ; make configure; \
-sed -i 's| LIBS = -L${OBJDIR} -lioapi $(NCFLIBS) $(OMPLIBS) $(ARCHLIB) $(ARCHLIBS)|LIBS = -L${OBJDIR} -L/opt/lib -lioapi -lnetcdff -lnetcdf -lhdf5hl_fortran -lhdf5_fortran -lhdf5_hl -lhdf5 -lm -lz -lcurl $(OMPLIBS) $(ARCHLIB) $(ARCHLIBS)|' m3tools/Makefile.nocpl.sed ;\
-cp ioapi/*.EXT ioapi/fixed_src ;\
-make BIN=Linux2_x86_64gfort
+        sed -i '/^ LIBS = -L${OBJDIR}.*/c\LIBS = -L${OBJDIR} -L/opt/lib -lioapi -lnetcdff -lnetcdf -lhdf5hl_fortran -lhdf5_fortran -lhdf5_hl -lhdf5 -lm -lz -lcurl $(OMPLIBS) $(ARCHLIB) $(ARCHLIBS)'  m3tools/Makefile.nocpl.sed ;\
+        cp ioapi/*.EXT ioapi/fixed_src ;\
+        make BIN=Linux2_x86_64gfort
+
 
 # CMAQ 5.1
 ENV LD_LIBRARY_PATH=/opt/lib/:/usr/lib64/mpi/gcc/openmpi/lib64
