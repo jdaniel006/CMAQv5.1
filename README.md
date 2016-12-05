@@ -9,6 +9,14 @@ Tutorial (continue in the linked section): http://www.airqualitymodeling.org/cma
 
 Please, feel free to copy, use and contribute.
 
-Licensed CC-By.
-
+This work licensed CC-By.
 Tecnalia 2016.
+
+All products used by this image are trademarks of their respective owners, where appropriate. For more details, please refer to:
+* CMAQ: https://www.cmascenter.org/cmaq/
+* IOAPI: https://www.cmascenter.org/ioapi/
+* netCDF: http://www.unidata.ucar.edu/software/netcdf/
+* HDF5: https://support.hdfgroup.org/HDF5/
+* curl: https://curl.haxx.se/
+* zlib: http://www.zlib.net/
+* OpenSUSE: https://www.opensuse.org
