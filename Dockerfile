@@ -10,17 +10,20 @@ cmaq.user="root"
 
 # Install needed O.S. packages
 RUN zypper -n install tcsh \
-gcc \
-gcc-fortran \
-gcc-c++ \
-make \
-vim \
-wget \
-git \
-tar \
-openmpi-devel \
-time \
-which
+        gcc \
+        gcc-fortran \
+        gcc-c++ \
+        make \
+        vim \
+        wget \
+        git \
+        tar \
+        openmpi-devel \
+        time \
+        which\
+        libssh2-devel \
+        libopenssl-devel
+
 
 # To investigate: run everything as an unprivileged user
 #RUN useradd -d /home/meteo -m meteo
@@ -50,11 +53,12 @@ make ;\
 make install
 
 # curl installation
+# Modified to support SSL
 RUN cd /opt ;\
 wget -q https://curl.haxx.se/download/curl-7.48.0.tar.gz ;\
 tar -zxf curl-7.48.0.tar.gz
 RUN cd /opt/curl-7.48.0 ; \
-./configure --prefix=/opt/ --with-zlib=/opt ;\
+./configure --prefix=/opt/ --with-zlib=/opt  --with-libssh2 ;\
 make ;\
 make install
 
@@ -80,13 +84,11 @@ make ;\
 make install
 
 # IOAPI installation
+# New - 2016-12-05 - Changed to cjcoats github repository to download IOAPI 3.2
 RUN cd /opt ;\
-wget \
---no-check-certificate \
--q https://www.cmascenter.org/ioapi/download/ioapi-3.2.tar.gz ;\
-mkdir IOAPI ; cd IOAPI ;\
-tar -zxf ../ioapi-3.2.tar.gz ;\
-
+        git clone https://github.com/cjcoats/ioapi-3.2 ;\
+        mv ioapi-3.2 IOAPI ;\
+        cd IOAPI ;\
 # Modificaciones del Makefile para nocpl y nuestros directorios
         cp Makefile.template  Makefile ;\
 # Makefile modifications: nocpl and use our directories
@@ -122,8 +124,8 @@ RUN echo source /opt/CMAQv5.1/scripts/config.cmaq > /root/.cshrc
 RUN echo setenv LD_LIBRARY_PATH /opt/lib:/opt/CMAQv5.1/lib/x86_64/gcc/mpich/lib64 >> /root/.cshrc
 # Unlimit does not work in container, therefore:
 RUN sed -i s/unlimit/#unlimit/ /opt/CMAQv5.1/scripts/icon/run.icon ;\
-sed -i s/unlimit/#unlimit/ /opt/CMAQv5.1/scripts/bcon/run.bcon ;\
-sed -i s/unlimit/#unlimit/ /opt/CMAQv5.1/scripts/cctm/run.cctm
+         sed -i s/unlimit/#unlimit/ /opt/CMAQv5.1/scripts/bcon/run.bcon ;\
+         sed -i s/unlimit/#unlimit/ /opt/CMAQv5.1/scripts/cctm/run.cctm
 
 # In case sshd is needed (maybe for mpirun, in the future)
 # A new public key must be generated
